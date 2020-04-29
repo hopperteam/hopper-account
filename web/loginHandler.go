@@ -56,7 +56,7 @@ func createAndReplySession(w http.ResponseWriter, sessUsr *model.SessionUser) {
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	http.SetCookie(w, &http.Cookie{Name: "HOPPER_SESSION", Value: session, Path: "/", Domain: "hoppercloud.net", Expires: expire, MaxAge: 4*60*60 })
+	http.SetCookie(w, &http.Cookie{Name: "HOPPER_SESSION", Value: session, Domain: config.Config.CookieDomainName, Expires: expire, MaxAge: 4*60*60 })
 
 	err = json.NewEncoder(w).Encode(&loginResponseBody{
 		Session: session,

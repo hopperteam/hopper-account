@@ -4,6 +4,7 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"gopkg.in/mgo.v2/bson"
 	"time"
 )
 
@@ -27,5 +28,10 @@ func ConnectDB(connectStr string, db string) error {
 	database = client.Database(db)
 	userCollection = database.Collection("users")
 
-	return nil
+	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
+	_, err = userCollection.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys: bson.M{ "email": 1 },
+	})
+
+	return err
 }
