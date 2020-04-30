@@ -22,20 +22,20 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(body)
 	if err != nil {
-		http.Error(w, "Bad Request", http.StatusBadRequest)
+		apiError(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
 
 	usr, err := model.LoadUserByEmail(body.EMail)
 
 	if err == nil {
-		http.Error(w, "Email already exists", http.StatusBadRequest)
+		apiError(w, "Email already exists", http.StatusBadRequest)
 		return
 	}
 
 	pwHash, err := security.GetPasswordHash(body.Password)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		apiError(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -50,7 +50,7 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := model.CreateUser(usr)
 
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		apiError(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
