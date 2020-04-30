@@ -23,7 +23,7 @@ func (server *Server) Start() {
 
 	r.Path("/api/login").Methods("POST").HandlerFunc(loginHandler)
 	r.Path("/api/signUp").Methods("POST").HandlerFunc(signUpHandler)
-
+	
 	userRoute := r.Path("/api/user")
 
 	userRoute.Methods("GET")
