@@ -24,6 +24,19 @@ func CreateSession(usr *model.SessionUser, expire int64) (string, error) {
 
 }
 
+func DecodeSession(sess string) (*model.SessionUser, error) {
+	sUsr := &SessionUserClaims{}
+	_, err := jwt.ParseWithClaims(sess, sUsr, func(token *jwt.Token) (interface{}, error) {
+		return privateKey.Public(), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &sUsr.User, nil
+}
+
 var privateKey *rsa.PrivateKey
 
 func LoadKeys() error {

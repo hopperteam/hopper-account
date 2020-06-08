@@ -19,15 +19,14 @@ func NewServer() *Server {
 func (server *Server) Start() {
 	r := mux.NewRouter()
 
-	r.Path("/api").Methods("GET").HandlerFunc(InfoHandler)
+	r.Path("/api").Methods(http.MethodGet).HandlerFunc(InfoHandler)
 
-	r.Path("/api/login").Methods("POST").HandlerFunc(loginHandler)
-	r.Path("/api/signUp").Methods("POST").HandlerFunc(signUpHandler)
-	
-	userRoute := r.Path("/api/user")
+	r.Path("/api/login").Methods(http.MethodPost).HandlerFunc(loginHandler)
+	r.Path("/api/signUp").Methods(http.MethodPost).HandlerFunc(signUpHandler)
 
-	userRoute.Methods("GET")
-	userRoute.Methods("PUT")
+	r.Path("/api/logout").Methods(http.MethodPost).HandlerFunc(logoutHandler)
+
+	r.Path("/api/user").Methods(http.MethodGet).HandlerFunc(userGetHandler)
 
 	log.Fatal(http.ListenAndServe(":80",  handlers.CORS()(r)))
 }

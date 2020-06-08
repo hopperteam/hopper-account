@@ -20,16 +20,6 @@ type loginResponseBody struct {
 	User *model.SessionUser `json:"user"`
 }
 
-type apiResultElement struct {
-	Status string `json:"status"`
-	Result interface{} `json:"result"`
-}
-
-type apiErrorElement struct {
-	Status string `json:"status"`
-	Reason interface{} `json:"reason"`
-}
-
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	body := &loginRequestBody{}
 
@@ -64,8 +54,7 @@ func createAndReplySession(w http.ResponseWriter, sessUsr *model.SessionUser) {
 		apiError(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-
-	w.Header().Add("Content-Type", "application/json")
+	
 	http.SetCookie(w, &http.Cookie{Name: "HOPPER_SESSION", Value: session, Path: "/", Expires: expire, Domain: config.Config.CookieDomainName })
 
 	apiResult(w, &loginResponseBody{
@@ -74,28 +63,3 @@ func createAndReplySession(w http.ResponseWriter, sessUsr *model.SessionUser) {
 	})
 }
 
-func apiResult(w http.ResponseWriter, result interface{}) {
-	err := json.NewEncoder(w).Encode(&apiResultElement{
-		Status: "success",
-		Result: result,
-	})
-
-	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-}
-
-func apiError(w http.ResponseWriter, error string, statusCode int) {
-	w.WriteHeader(statusCode)
-
-	err := json.NewEncoder(w).Encode(&apiErrorElement{
-		Status: "error",
-		Reason: error,
-	})
-
-	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-}
